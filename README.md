@@ -1,16 +1,56 @@
-# React + Vite
+# 🚀 UPIGrid – Distributed UPI Payment Processing System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+UPIGrid is a microservices-based system that simulates how UPI transactions flow between Payment Service Providers (PSPs), the central switch operated by NPCI, and beneficiary banks within the UPI ecosystem.
 
-Currently, two official plugins are available:
+This models the complete transaction lifecycle, including request validation, routing through a central switch, debit and credit processing, and response propagation across independent services while maintaining consistent transaction states.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🏗️ High-Level Architecture
+![High-Level Design of UPIFlow](High-Level-Design-UPI.png)
 
-## React Compiler
+UPIGrid is designed around four core logical entities communicating securely to process a transaction lifecycle:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **PSP Service (Payment Service Provider):** The user-facing gateway. It authenticates the user, validates balances, and initiates the payment request.
+* **NPCI Switch (Central Router):** The central brain of the ecosystem. It receives requests from the PSP, validates the destination, and securely routes the transaction to the appropriate banks.
+* **Bank A (Remitter Bank):** The sender's bank, responsible for verifying funds and safely processing the debit.
+* **Bank B (Beneficiary Bank):** The receiver's bank, responsible for processing the credit and finalizing the ledger update.
 
-## Expanding the ESLint configuration
+### 🔁 The Transaction Flow
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **Initiation:** The user logs into the PSP app and initiates a transfer.
+* **Routing:** The PSP validates the JWT and sends the request to the NPCI switch.
+* **Settlement:** The NPCI routes the debit request to Bank A and the credit request to Bank B.
+* **Confirmation:** Both banks process their respective ledger updates. The NPCI consolidates the status and propagates the final response back to the user via the PSP.
+
+---
+
+## 🧩 Microservices Ecosystem
+
+The system is broken down into independent, modular services with strict separation of concerns.
+
+| Component | Description | Repository |
+| :--- | :--- | :--- |
+| **PSP Service** | Handles user authentication, balance checks, and transaction initiation. | [View Repo](https://github.com/sabaneabhishek0110/UPISIM-PSP-Service) |
+| **NPCI Service** | Central transaction switch and routing logic. | [View Repo](https://github.com/sabaneabhishek0110/UPISIM-NPCI-Service) |
+| **Bank-A Service** | Manages debit/credit processing and ledger management. | [View Repo](https://github.com/sabaneabhishek0110/UPISIM-Bank-A-Service) |
+| **Bank-B Service** | Manages debit/credit processing and ledger management. | [View Repo](https://github.com/sabaneabhishek0110/UPISIM-Bank-B-Service) |
+| **Frontend** | React-based user interface for transaction initiation. | [View Repo](https://github.com/sabaneabhishek0110/UPISIM-Frontend) |
+
+
+---
+
+## ⚙️ Core System Capabilities
+
+This project goes beyond basic CRUD operations, implementing advanced distributed system patterns to ensure transactional integrity and system reliability:
+
+* **Distributed Architecture:** Independent microservices, each operating with its own isolated database schema.
+* **Data Integrity:** Implements the Outbox Pattern to prevent data loss and maintains strict ACID guarantees across transaction tables.
+* **Fault Tolerance:** Built-in failure handling, retry mechanisms, and idempotency support to handle service crashes gracefully.
+* **Robust Security:** Secured via JWT-based authentication, HttpOnly secure cookies, role-based authorization, and protected service-to-service communication.
+
+---
+
+## 🛠️ Tech Stack & Deployment
+
+* **Backend:** Java, Spring Boot, Spring Security, Spring Data JPA, RESTful APIs.
+* **Frontend:** React.js, Zustand (State Management), React Router, Axios.
+* **Database:** PostgreSQL (Independent schemas per service).
