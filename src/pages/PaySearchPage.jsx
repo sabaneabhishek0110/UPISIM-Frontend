@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { motion } from "framer-motion";
 import useAuthStore from "../store/authStore";
 import userPaymentStore from "../store/paymentStore.js";
+import PageTransition from "../components/PageTransition";
 
 const PaySearchPage = () => {
   const navigate = useNavigate();
   const currUser = useAuthStore((state) => state.user);
-  const {setReceiver,setSelectedAccount} = userPaymentStore();
+  const lookupUser = useAuthStore((state) => state.lookupUser);
+  const { setReceiver, setSelectedAccount } = userPaymentStore();
 
   const [upiId, setUpiId] = useState("");
   const [searchRes, setSearchRes] = useState(null);
@@ -15,126 +17,92 @@ const PaySearchPage = () => {
   const [error, setError] = useState("");
 
   const handleSearch = async () => {
-    if (!upiId) {
-        setError("Please enter a UPI ID");
-        return;
+    if (!upiId) { setError("Please enter a UPI ID"); return; }
+    const parts = upiId.split("@");
+    if (upiId.length < 12 || parts.length !== 2 || !/^\d{10}$/.test(parts[0])) {
+      setError("Invalid UPI ID Format"); return;
     }
-    let valid = true;
-
-    if(upiId.length<12){
-        setError("Invalid UPI ID Format");
-        valid = false;
-    }
-    const regex = /^\d{10}$/;
-    const parts = upiId.split('@');
-    if(parts.length !==2 || !regex.test(parts[0])){
-        setError("Invalid UPI ID Format");
-        valid = false;
-    }
-    if(!valid) return;
-    if(upiId == currUser.vpa){
-        setError("Cannot pay to your own UPI ID");
-        return;
-    }
-    setLoading(true);
-    setError("");
-    setSearchRes(null);
-
+    if (upiId === currUser.vpa) { setError("Cannot pay to your own UPI ID"); return; }
+    setLoading(true); setError(""); setSearchRes(null);
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/user`,
-        {
-          params: { vpa : upiId },
-          withCredentials: true,
-        }
-      );
-      if(res.data.vpa !== upiId || !res.data.vpa){
-        setError("UPI ID not found");
-        setLoading(false);
-        return;
-      }
-      setSearchRes(res.data);
-    } catch (err) {
-      setError("UPI ID not found");
-    } finally {
-      setLoading(false);
-    }
+      const data = await lookupUser(upiId);
+      if (data.vpa !== upiId || !data.vpa) { setError("UPI ID not found"); setLoading(false); return; }
+      setSearchRes(data);
+    } catch { setError("UPI ID not found"); } finally { setLoading(false); }
   };
 
   const handleSelectReceiver = () => {
-    console.log("selected user : ",searchRes);
-    
     setReceiver(searchRes);
-    setSelectedAccount({bank: currUser.bank, vpa: currUser.vpa});
+    setSelectedAccount({ bank: currUser.bank, vpa: currUser.vpa });
     navigate("/pay/details");
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-100 to-gray-200 p-8">
+    <PageTransition>
+      <div className="max-w-lg mx-auto px-4 py-10">
+        <div className="flex items-center mb-8">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="mr-4 font-medium text-sm"
+            style={{ color: "var(--color-accent)" }}
+          >
+            ← Back
+          </button>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-text)" }}>
+            Pay via UPI
+          </h1>
+        </div>
 
-      {/* Header */}
-      <div className="flex items-center mb-8">
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="mr-4 text-blue-600 hover:text-blue-700 font-medium"
-        >
-          ← Back
-        </button>
-        <h1 className="text-2xl font-bold text-gray-800">
-          Pay via UPI
-        </h1>
-      </div>
+        {/* Search Box */}
+        <div className="rounded-xl p-6 border" style={{ backgroundColor: "var(--color-bg-card)", borderColor: "var(--color-border)" }}>
+          <label className="block text-sm font-medium mb-2" style={{ color: "var(--color-text-secondary)" }}>
+            Enter UPI ID
+          </label>
+          <input
+            type="text"
+            value={upiId}
+            onChange={(e) => setUpiId(e.target.value)}
+            placeholder="example@upi"
+            className="w-full rounded-lg px-4 py-2 mb-4 border focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            style={{
+              backgroundColor: "var(--color-bg-secondary)",
+              borderColor: "var(--color-border)",
+              color: "var(--color-text)",
+            }}
+          />
+          <button
+            onClick={handleSearch}
+            disabled={loading}
+            className="w-full text-white py-2 rounded-lg transition disabled:opacity-60"
+            style={{ background: "linear-gradient(135deg, #4f46e5, #6366f1)" }}
+          >
+            {loading ? "Searching..." : "Search"}
+          </button>
+          {error && (
+            <p className="text-sm mt-4 text-center" style={{ color: "var(--color-danger)" }}>{error}</p>
+          )}
+        </div>
 
-      {/* Search Box */}
-      <div className="max-w-md mx-auto bg-white p-6 rounded-xl shadow-lg">
-        <label className="block text-sm font-medium text-gray-600 mb-2">
-          Enter UPI ID
-        </label>
-
-        <input
-          type="text"
-          value={upiId}
-          onChange={(e) => setUpiId(e.target.value)}
-          placeholder="example@upi"
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-
-        <button
-          onClick={handleSearch}
-          disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"
-        >
-          {loading ? "Searching..." : "Search"}
-        </button>
-
-        {/* Error */}
-        {error && (
-          <p className="text-red-500 text-sm mt-4 text-center">
-            {error}
-          </p>
+        {/* Result */}
+        {searchRes && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6"
+          >
+            <div
+              onClick={handleSelectReceiver}
+              className="cursor-pointer rounded-xl p-5 border transition-shadow hover:shadow-lg"
+              style={{ backgroundColor: "var(--color-bg-card)", borderColor: "var(--color-border)" }}
+            >
+              <h3 className="text-lg font-semibold" style={{ color: "var(--color-text)" }}>{searchRes.name}</h3>
+              <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>{searchRes.upiId}</p>
+              <p className="mt-2 text-sm" style={{ color: "var(--color-accent)" }}>Tap to pay →</p>
+            </div>
+          </motion.div>
         )}
       </div>
-
-      {/* searchRes Result */}
-      {searchRes && (
-        <div className="max-w-md mx-auto mt-6">
-          <div
-            onClick={handleSelectReceiver}
-            className="cursor-pointer bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition"
-          >
-            <h3 className="text-lg font-semibold text-gray-800">
-              {searchRes.name}
-            </h3>
-            <p className="text-sm text-gray-500">
-              {searchRes.upiId}
-            </p>
-            <p className="mt-2 text-blue-600 text-sm">
-              Tap to pay →
-            </p>
-          </div>
-        </div>
-      )}
-    </div>
+    </PageTransition>
   );
 };
 

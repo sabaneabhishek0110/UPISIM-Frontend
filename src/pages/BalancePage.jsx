@@ -1,127 +1,110 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
+import { motion } from "framer-motion";
 import useBalanceStore from "../store/balanceStore";
 import { useNavigate } from "react-router-dom";
+import PageTransition from "../components/PageTransition";
 
 const BalancePage = () => {
   const navigate = useNavigate();
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
 
-  const {
-    balance,
-    loading,
-    error,
-    setBalance,
-    setLoading,
-    setError,
-    resetBalance,
-  } = useBalanceStore();
+  const { balance, loading, error, setError, fetchBalance, resetBalance } = useBalanceStore();
 
   const handleCheckBalance = async () => {
-    if (pin.length !== 6) {
-      setError("Enter a valid 6-digit UPI PIN");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/account/balance`,
-        { pin },
-        { withCredentials: true }
-      );
-
-      setBalance(res.data.balance);
-    } catch (err) {
-      setError(
-        err.response?.data?.failureReason || "Unable to fetch balance"
-      );
-    } finally {
-      setLoading(false);
-      setPin("");
-    }
+    if (pin.length !== 6) { setError("Enter a valid 6-digit UPI PIN"); return; }
+    await fetchBalance(pin);
+    setPin("");
   };
 
   useEffect(() => {
-    resetBalance(); //run when page get loads
-    return () =>{
-      resetBalance(); //runs when page get exit
-    }
+    resetBalance();
+    return () => resetBalance();
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white flex items-center justify-center px-4">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+    <PageTransition>
+      <div className="min-h-[80vh] flex items-center justify-center px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl p-8 w-full max-w-md border"
+          style={{ backgroundColor: "var(--color-bg-card)", borderColor: "var(--color-border)" }}
+        >
+          <h2 className="text-2xl font-semibold text-center" style={{ color: "var(--color-text)" }}>
+            Check Account Balance
+          </h2>
+          <p className="text-sm text-center mt-1" style={{ color: "var(--color-text-secondary)" }}>
+            Enter UPI PIN to view balance
+          </p>
 
-        <h2 className="text-2xl font-semibold text-gray-800 text-center">
-          Check Account Balance
-        </h2>
-
-        <p className="text-sm text-gray-500 text-center mt-1">
-          Enter UPI PIN to view balance
-        </p>
-
-        {/* PIN Input */}
-        <div className="mt-6 relative">
-          <input
-            type={showPin ? "text" : "password"}
-            value={pin}
-            maxLength={6}
-            onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-            placeholder="Enter 6-digit UPI PIN"
-            className="w-full border rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-          <button
-            onClick={() => setShowPin(!showPin)}
-            className="absolute right-3 top-3 text-gray-500"
-          >
-            {showPin ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
-        </div>
-
-        {/* Error */}
-        {error && (
-          <div className="mt-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm">
-            {error}
+          {/* PIN Input */}
+          <div className="mt-6 relative">
+            <input
+              type={showPin ? "text" : "password"}
+              value={pin}
+              maxLength={6}
+              onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+              placeholder="Enter 6-digit UPI PIN"
+              className="w-full rounded-xl px-4 py-3 pr-12 border focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              style={{
+                backgroundColor: "var(--color-bg-secondary)",
+                borderColor: "var(--color-border)",
+                color: "var(--color-text)",
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPin(!showPin)}
+              className="absolute right-3 top-3"
+              style={{ color: "var(--color-text-muted)" }}
+            >
+              {showPin ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
-        )}
 
-        {/* Balance */}
-        {balance !== null && (
-          <div className="mt-6 bg-green-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Available Balance</p>
-            <p className="text-3xl font-bold text-gray-900 mt-1">
-              ₹{balance}
-            </p>
+          {/* Error */}
+          {error && (
+            <div className="mt-4 p-3 rounded-lg text-sm" style={{ backgroundColor: "var(--color-danger-light)", color: "var(--color-danger)" }}>
+              {error}
+            </div>
+          )}
+
+          {/* Balance */}
+          {balance !== null && (
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="mt-6 rounded-xl p-4 text-center"
+              style={{ backgroundColor: "var(--color-success-light)" }}
+            >
+              <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>Available Balance</p>
+              <p className="text-3xl font-bold mt-1" style={{ color: "var(--color-text)" }}>₹{balance}</p>
+            </motion.div>
+          )}
+
+          {/* Buttons */}
+          <div className="mt-6 space-y-3">
+            <button
+              onClick={handleCheckBalance}
+              disabled={loading}
+              className="w-full text-white py-3 rounded-xl font-semibold transition disabled:opacity-60"
+              style={{ background: "linear-gradient(135deg, #4f46e5, #6366f1)" }}
+            >
+              {loading ? "Checking..." : "Check Balance"}
+            </button>
+            <button
+              onClick={() => { resetBalance(); navigate("/dashboard"); }}
+              className="w-full py-3 rounded-xl font-medium border transition"
+              style={{ borderColor: "var(--color-border)", color: "var(--color-text-secondary)" }}
+            >
+              Back to Dashboard
+            </button>
           </div>
-        )}
-
-        {/* Buttons */}
-        <div className="mt-6 space-y-3">
-          <button
-            onClick={handleCheckBalance}
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition disabled:opacity-60"
-          >
-            {loading ? "Checking..." : "Check Balance"}
-          </button>
-
-          <button
-            onClick={() => {
-              resetBalance();
-              navigate("/dashboard");
-            }}
-            className="w-full border border-gray-300 py-3 rounded-xl font-medium text-gray-700 hover:bg-gray-100 transition"
-          >
-            Back to Dashboard
-          </button>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </PageTransition>
   );
 };
 

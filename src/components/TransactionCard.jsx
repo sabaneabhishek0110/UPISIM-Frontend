@@ -1,42 +1,49 @@
 
+import { motion } from "framer-motion";
 
 const TransactionCard = ({ txn, onClick }) => {
   const isDebit = txn.type === "DEBIT";
 
+  const statusColor =
+    txn.status === "SUCCESS"
+      ? "var(--color-success)"
+      : txn.status === "FAILED"
+      ? "var(--color-danger)"
+      : "#eab308";
+
   return (
-    <div
+    <motion.div
       onClick={() => onClick(txn.id)}
-      className="flex justify-between items-center bg-white p-4 rounded-xl shadow cursor-pointer hover:bg-gray-50"
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
+      className="flex justify-between items-center p-4 rounded-xl cursor-pointer transition-colors"
+      style={{
+        backgroundColor: "var(--color-bg-card)",
+        border: "1px solid var(--color-border)",
+      }}
     >
-      <div className="flex gap-3">
+      <div className="flex gap-3 items-center">
         <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center
-          ${isDebit ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}
+          className="w-10 h-10 rounded-full flex items-center justify-center font-bold"
+          style={{
+            backgroundColor: isDebit ? "var(--color-danger-light)" : "var(--color-success-light)",
+            color: isDebit ? "var(--color-danger)" : "var(--color-success)",
+          }}
         >
           {isDebit ? "↑" : "↓"}
         </div>
-
         <div>
-          <p className="font-medium">{txn.title}</p>
-          <p className="text-sm text-gray-500">
+          <p className="font-medium text-sm" style={{ color: "var(--color-text)" }}>{txn.title}</p>
+          <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
             {new Date(txn.createdAt).toLocaleString()}
           </p>
         </div>
       </div>
-
       <div className="text-right">
-        <p className="font-semibold">₹{txn.amount}</p>
-        <p className={`text-sm ${
-          txn.status === "SUCCESS"
-            ? "text-green-600"
-            : txn.status === "FAILED"
-            ? "text-red-600"
-            : "text-yellow-600"
-        }`}>
-          {txn.status}
-        </p>
+        <p className="font-semibold text-sm" style={{ color: "var(--color-text)" }}>₹{txn.amount}</p>
+        <p className="text-xs font-medium" style={{ color: statusColor }}>{txn.status}</p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

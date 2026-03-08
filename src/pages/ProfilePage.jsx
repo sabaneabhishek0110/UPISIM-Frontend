@@ -1,38 +1,36 @@
 import { useNavigate } from "react-router-dom";
 import ProfileCard from "../components/ProfileCard";
+import PageTransition from "../components/PageTransition";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-8">
+    <PageTransition>
+      <div className="max-w-2xl mx-auto px-4 py-10">
+        <div className="flex items-center mb-8">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="mr-4 font-medium text-sm"
+            style={{ color: "var(--color-accent)" }}
+          >
+            ← Back
+          </button>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-text)" }}>
+            Your Profile
+          </h1>
+        </div>
 
-      {/* Header */}
-      <div className="flex items-center mb-8">
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="mr-4 text-blue-600 hover:text-blue-700 font-medium"
-        >
-          ← Back
-        </button>
+        <div className="flex justify-center">
+          <ProfileCard />
+        </div>
 
-        <h1 className="text-2xl font-bold text-gray-800">
-          Your Profile
-        </h1>
+        <div className="mt-8 text-center text-sm max-w-md mx-auto" style={{ color: "var(--color-text-muted)" }}>
+          Your profile information is securely fetched from your bank-linked UPI account.
+          Editing is currently disabled for security reasons.
+        </div>
       </div>
-
-      {/* Profile Card */}
-      <div className="flex justify-center">
-        <ProfileCard />
-      </div>
-
-      {/* Info Section */}
-      <div className="mt-8 text-center text-sm text-gray-500 max-w-md mx-auto">
-        Your profile information is securely fetched from your bank-linked UPI account.
-        Editing is currently disabled for security reasons.
-      </div>
-
-    </div>
+    </PageTransition>
   );
 };
 

@@ -1,61 +1,57 @@
-import { use, useState ,useEffect} from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import Input from "../components/Input.jsx";
 import Button from "../components/Button.jsx";
 import Card from "../components/Card.jsx";
+import PageTransition from "../components/PageTransition.jsx";
 import useAuthStore from "../store/authStore.js";
-import axios from "axios";
 
 const Login = () => {
-  const user = useAuthStore(state => state.user);
+  const user = useAuthStore((state) => state.user);
+  const login = useAuthStore((state) => state.login);
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [error,setError] = useState("");
-  const setUser = useAuthStore((state) => state.setUser);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try{
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`,{
-          phone,
-          password
-      }, 
-      { withCredentials: true });
-      // console.log("data : ",response.data);
-      // console.log("data : ",response.body);
-
-      setUser(response.data);
+    try {
+      await login(phone, password);
       navigate("/dashboard");
-    }
-    catch(err){
-        console.log("Login Failed",err.response?.data?.message || err.message);
-        setError(err.response?.data?.message|| "Something went wrong");
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong");
     }
   };
 
   useEffect(() => {
-    if(user){
-      navigate("/dashboard");
-    }
-  },[]);
-
+    if (user) navigate("/dashboard");
+  }, []);
 
   return (
-    <Card>
-      <h2 className="text-2xl font-bold text-center mb-6">Login to UPI Simulator</h2>
-      <form onSubmit={handleLogin}>
-        <Input label="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Enter Phone" />
-        <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter password" />
-        {/* Warning message */}
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <Button type="submit">Login</Button>
-      </form>
-      <p className="mt-4 text-center">
-        Don't have an account? <Link className="text-primary font-semibold" to="/register">Register</Link>
-      </p>
-    </Card>
+    <PageTransition>
+      <div className="min-h-[80vh] flex items-center justify-center px-4">
+        <Card>
+          <h2 className="text-2xl font-bold text-center mb-6" style={{ color: "var(--color-text)" }}>
+            Login to UPI Simulator
+          </h2>
+          <form onSubmit={handleLogin}>
+            <Input label="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Enter Phone" />
+            <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter password" />
+            {error && (
+              <p className="text-sm mb-4 px-3 py-2 rounded-lg" style={{ color: "var(--color-danger)", backgroundColor: "var(--color-danger-light)" }}>
+                {error}
+              </p>
+            )}
+            <Button type="submit">Login</Button>
+          </form>
+          <p className="mt-4 text-center text-sm" style={{ color: "var(--color-text-secondary)" }}>
+            Don't have an account?{" "}
+            <Link className="font-semibold" style={{ color: "var(--color-accent)" }} to="/register">Register</Link>
+          </p>
+        </Card>
+      </div>
+    </PageTransition>
   );
 };
 
