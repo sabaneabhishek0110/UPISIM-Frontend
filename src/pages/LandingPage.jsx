@@ -58,7 +58,7 @@ const LandingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span
+            {/* <span
               className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-6"
               style={{
                 backgroundColor: "var(--color-accent-light)",
@@ -66,21 +66,20 @@ const LandingPage = () => {
               }}
             >
               Educational Project
-            </span>
+            </span> */}
 
             <h1
               className="text-4xl sm:text-6xl font-extrabold leading-tight mb-6"
               style={{ color: "var(--color-text)" }}
             >
-              UPI Payment{" "}
-              <span
+              UPI<span
                 style={{
                   background: "linear-gradient(135deg, #4f46e5, #818cf8)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                Simulator
+                Grid
               </span>
             </h1>
 
@@ -88,15 +87,15 @@ const LandingPage = () => {
               className="text-lg sm:text-xl max-w-2xl mx-auto mb-10"
               style={{ color: "var(--color-text-secondary)" }}
             >
-              A full-stack distributed systems project that replicates India's UPI
-              payment infrastructure with microservices, async processing, and
-              cryptographic signing.
+              Send and receive money instantly across banks using your UPI ID.
+              Powered by a real microservices backbone with bank-grade security
+              and cryptographic signing.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Link
-                  to="/register"
+                  to="/login"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white text-sm"
                   style={{ background: "linear-gradient(135deg, #4f46e5, #6366f1)" }}
                 >
@@ -183,7 +182,7 @@ const LandingPage = () => {
           </motion.h2>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            {["User", "PSP", "NPCI", "Payer Bank", "Payee Bank"].map((step, i) => (
+            {["User", "PSP", "NPCI", "Payer Bank","NPCI", "Payee Bank"].map((step, i) => (
               <motion.div
                 key={step}
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -202,7 +201,7 @@ const LandingPage = () => {
                 >
                   {step}
                 </div>
-                {i < 4 && (
+                {i < 5 && (
                   <ArrowRight size={16} style={{ color: "var(--color-text-muted)" }} />
                 )}
               </motion.div>

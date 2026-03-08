@@ -1,8 +1,9 @@
 
 import { motion } from "framer-motion";
 
-const TransactionCard = ({ txn, onClick }) => {
-  const isDebit = txn.type === "DEBIT";
+const TransactionCard = ({ txn, currentVpa, onClick }) => {
+  const isDebit = txn.payer_vpa === currentVpa;
+  const counterparty = isDebit ? txn.payee_vpa : txn.payer_vpa;
 
   const statusColor =
     txn.status === "SUCCESS"
@@ -33,7 +34,7 @@ const TransactionCard = ({ txn, onClick }) => {
           {isDebit ? "↑" : "↓"}
         </div>
         <div>
-          <p className="font-medium text-sm" style={{ color: "var(--color-text)" }}>{txn.title}</p>
+          <p className="font-medium text-sm" style={{ color: "var(--color-text)" }}>{counterparty}</p>
           <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
             {new Date(txn.createdAt).toLocaleString()}
           </p>

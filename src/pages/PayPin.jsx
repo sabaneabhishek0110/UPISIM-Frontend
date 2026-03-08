@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import usePaymentStore from "../store/paymentStore";
 import PageTransition from "../components/PageTransition";
+import TestBanner from "../components/TestBanner";
 
 const PayPin = () => {
   const navigate = useNavigate();
@@ -59,7 +60,9 @@ const PayPin = () => {
   return (
     <PageTransition>
       <div className="min-h-[80vh] flex items-center justify-center px-4">
-        <motion.div
+        <div className="w-full max-w-md">
+          <TestBanner variant="pin" currentUserVpa={selectedAccount?.vpa} />
+          <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md rounded-2xl p-6 space-y-6 border"
@@ -125,6 +128,7 @@ const PayPin = () => {
             Cancel Payment
           </button>
         </motion.div>
+        </div>
       </div>
     </PageTransition>
   );

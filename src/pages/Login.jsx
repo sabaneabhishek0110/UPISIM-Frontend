@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Input from "../components/Input.jsx";
 import Button from "../components/Button.jsx";
 import Card from "../components/Card.jsx";
 import PageTransition from "../components/PageTransition.jsx";
 import useAuthStore from "../store/authStore.js";
+import TestBanner from "../components/TestBanner.jsx";
 
 const Login = () => {
   const user = useAuthStore((state) => state.user);
@@ -31,9 +32,11 @@ const Login = () => {
   return (
     <PageTransition>
       <div className="min-h-[80vh] flex items-center justify-center px-4">
-        <Card>
+        <div className="w-full max-w-md">
+          <TestBanner variant="login" />
+          <Card>
           <h2 className="text-2xl font-bold text-center mb-6" style={{ color: "var(--color-text)" }}>
-            Login to UPI Simulator
+            Login to UPIGrid
           </h2>
           <form onSubmit={handleLogin}>
             <Input label="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Enter Phone" />
@@ -45,11 +48,9 @@ const Login = () => {
             )}
             <Button type="submit">Login</Button>
           </form>
-          <p className="mt-4 text-center text-sm" style={{ color: "var(--color-text-secondary)" }}>
-            Don't have an account?{" "}
-            <Link className="font-semibold" style={{ color: "var(--color-accent)" }} to="/register">Register</Link>
-          </p>
-        </Card>
+
+          </Card>
+        </div>
       </div>
     </PageTransition>
   );

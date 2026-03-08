@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import TransactionCard from "../components/TransactionCard";
 import TransactionDetailsModal from "../components/TransactionDetailsModal";
 import useTransactionStore from "../store/transactionStore";
+import useAuthStore from "../store/authStore";
 import PageTransition from "../components/PageTransition";
 
 const TransactionsPage = () => {
@@ -14,6 +15,8 @@ const TransactionsPage = () => {
     fetchTransactionDetail,
     selectedTransaction,
   } = useTransactionStore();
+
+  const currentVpa = useAuthStore((s) => s.user?.vpa);
 
   useEffect(() => {
     if (transactions.length === 0) fetchTransactions();
@@ -34,7 +37,7 @@ const TransactionsPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
             >
-              <TransactionCard txn={txn} onClick={fetchTransactionDetail} />
+              <TransactionCard txn={txn} currentVpa={currentVpa} onClick={fetchTransactionDetail} />
             </motion.div>
           ))}
         </div>

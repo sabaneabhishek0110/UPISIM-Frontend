@@ -5,6 +5,7 @@ import { Sun, Moon, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import useThemeStore from "../store/themeStore";
 import useAuthStore from "../store/authStore";
+import Logo from "./Logo";
 
 const Navbar = () => {
   const { theme, toggleTheme } = useThemeStore();
@@ -48,14 +49,9 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to={isLoggedIn ? "/dashboard" : "/"} className="flex items-center gap-2">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm"
-              style={{ background: "linear-gradient(135deg, #4f46e5, #6366f1)" }}
-            >
-              U
-            </div>
+            <Logo size={32} />
             <span className="font-bold text-lg" style={{ color: "var(--color-text)" }}>
-              UPI<span style={{ color: "var(--color-accent)" }}>Sim</span>
+              UPI<span style={{ color: "var(--color-accent)" }}>Grid</span>
             </span>
           </Link>
 

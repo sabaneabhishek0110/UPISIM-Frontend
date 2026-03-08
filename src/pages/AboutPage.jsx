@@ -1,14 +1,6 @@
 import { motion } from "framer-motion";
 import PageTransition from "../components/PageTransition";
 
-const techStack = [
-  { category: "Frontend", items: ["React 19", "Vite", "Zustand", "Tailwind CSS v4", "Framer Motion", "GSAP"] },
-  { category: "Backend", items: ["Spring Boot 3", "Spring Security", "Spring Data JPA", "REST APIs"] },
-  { category: "Database", items: ["PostgreSQL (per service)", "JPA / Hibernate"] },
-  { category: "Security", items: ["JWT (HttpOnly Cookies)", "RSA Digital Signatures", "PIN Hashing (BCrypt)"] },
-  { category: "Architecture", items: ["Microservices", "Outbox Pattern", "Async Processing", "Event-Driven"] },
-];
-
 const AboutPage = () => {
   return (
     <PageTransition>
@@ -26,71 +18,115 @@ const AboutPage = () => {
             About
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold mb-4" style={{ color: "var(--color-text)" }}>
-            About This Project
+            About UPIGrid
           </h1>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: "var(--color-text-secondary)" }}>
-            An educational full-stack project that simulates India's Unified Payments Interface (UPI) ecosystem.
+            A fast, secure, and reliable way to send and receive money using UPI &mdash; built on a real microservices backbone.
           </p>
         </motion.div>
 
-        {/* Description */}
+        {/* What is UPIGrid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="rounded-2xl p-8 mb-12"
+          className="rounded-2xl p-8 mb-8"
           style={{
             backgroundColor: "var(--color-bg-card)",
             border: "1px solid var(--color-border)",
           }}
         >
           <h2 className="text-xl font-bold mb-4" style={{ color: "var(--color-text)" }}>
-            What is UPI Simulator?
+            What is UPIGrid?
           </h2>
           <div className="space-y-4 text-sm" style={{ color: "var(--color-text-secondary)" }}>
             <p>
-              This project replicates the real-world UPI payment architecture using four independent
-              microservices &mdash; a PSP (like PhonePe/GPay), NPCI (the central switch), and two
-              banks (HDFC & ICICI).
+              UPIGrid is a digital payments platform built on India's Unified Payments Interface (UPI).
+              Send money instantly to any UPI ID, check your balance, and track every transaction &mdash;
+              all from a single app.
             </p>
             <p>
-              Each service runs independently with its own database, communicates over REST APIs with
-              digitally signed payloads, and handles failures through reversals &mdash; just like the
-              real UPI system.
+              Payments on UPIGrid are processed through a distributed network of services: your PSP app
+              communicates with NPCI (the central payments switch), which in turn coordinates with your
+              bank and the recipient's bank to complete the transfer in seconds.
             </p>
             <p>
-              The frontend is a modern React SPA that provides a complete payment experience: user
-              registration, UPI ID lookup, payment with PIN entry, real-time status polling, balance
-              checks, and full transaction history.
+              Every request is cryptographically signed end-to-end, your PIN never leaves your device in
+              plain text, and failed transactions are automatically reversed so your money is always safe.
             </p>
           </div>
         </motion.div>
 
-        {/* Key Concepts */}
+        {/* How it works */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="rounded-2xl p-8 mb-12"
+          className="rounded-2xl p-8 mb-8"
+          style={{
+            backgroundColor: "var(--color-bg-card)",
+            border: "1px solid var(--color-border)",
+          }}
+        >
+          <h2 className="text-xl font-bold mb-6" style={{ color: "var(--color-text)" }}>
+            How a Payment Works
+          </h2>
+          <div className="space-y-5">
+            {[
+              { step: "1", title: "You enter the UPI ID & amount", desc: "UPIGrid looks up the recipient's UPI address and confirms their name before you proceed." },
+              { step: "2", title: "You authorise with your PIN", desc: "Your 4-digit UPI PIN is hashed on-device and sent securely — it is never stored or transmitted in plain text." },
+              { step: "3", title: "NPCI orchestrates the transfer", desc: "The central switch sends a debit request to your bank. Once your bank confirms the debit, NPCI sends a credit request to the recipient's bank." },
+              { step: "4", title: "Funds arrive instantly", desc: "The recipient's bank credits their account and NPCI sends a final confirmation back to UPIGrid — your transaction is complete." },
+              { step: "5", title: "Automatic protection", desc: "If any step fails, UPIGrid automatically initiates a reversal so no money is lost in transit." },
+            ].map(({ step, title, desc }, i) => (
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.07 }}
+                className="flex gap-4 items-start"
+              >
+                <div
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs text-white font-bold flex-shrink-0 mt-0.5"
+                  style={{ background: "linear-gradient(135deg, #4f46e5, #6366f1)" }}
+                >
+                  {step}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold mb-0.5" style={{ color: "var(--color-text)" }}>{title}</p>
+                  <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>{desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* What you can do */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="rounded-2xl p-8"
           style={{
             backgroundColor: "var(--color-bg-card)",
             border: "1px solid var(--color-border)",
           }}
         >
           <h2 className="text-xl font-bold mb-4" style={{ color: "var(--color-text)" }}>
-            Key Concepts Demonstrated
+            What You Can Do
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              "Microservice architecture with independent databases",
-              "Inter-service communication with digital signatures",
-              "Async payment processing with outbox pattern",
-              "Two-phase transaction flow (debit → credit → callback)",
-              "Automatic reversal on partial failures",
-              "Frontend polling for real-time payment status",
-              "JWT authentication with HttpOnly cookies",
-              "VPA (Virtual Payment Address) resolution",
-            ].map((concept, i) => (
+              "Send money to any UPI ID instantly",
+              "Check your account balance in real time",
+              "View detailed transaction history",
+              "Know exactly where a payment stands",
+              "Your UPI ID is tied to your phone number",
+              "PIN-protected — only you can authorise payments",
+              "Instant reversal if a payment fails mid-way",
+              "Supports multiple banks (HDFC & ICICI)",
+            ].map((feature, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -10 }}
@@ -105,50 +141,11 @@ const AboutPage = () => {
                 >
                   ✓
                 </div>
-                <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>{concept}</p>
+                <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>{feature}</p>
               </motion.div>
             ))}
           </div>
         </motion.div>
-
-        {/* Tech Stack */}
-        <h2 className="text-2xl font-bold mb-8 text-center" style={{ color: "var(--color-text)" }}>
-          Tech Stack
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {techStack.map((group, i) => (
-            <motion.div
-              key={group.category}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="rounded-2xl p-5"
-              style={{
-                backgroundColor: "var(--color-bg-card)",
-                border: "1px solid var(--color-border)",
-              }}
-            >
-              <h3 className="font-semibold text-sm mb-3" style={{ color: "var(--color-text)" }}>
-                {group.category}
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {group.items.map((item) => (
-                  <span
-                    key={item}
-                    className="text-xs px-2 py-1 rounded-md font-medium"
-                    style={{
-                      backgroundColor: "var(--color-accent-light)",
-                      color: "var(--color-accent)",
-                    }}
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </PageTransition>
   );

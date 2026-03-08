@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import useBalanceStore from "../store/balanceStore";
+import useAuthStore from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
+import TestBanner from "../components/TestBanner";
 
 const BalancePage = () => {
   const navigate = useNavigate();
+  const currentUser = useAuthStore((s) => s.user);
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
 
@@ -26,7 +29,9 @@ const BalancePage = () => {
   return (
     <PageTransition>
       <div className="min-h-[80vh] flex items-center justify-center px-4">
-        <motion.div
+        <div className="w-full max-w-md">
+          <TestBanner variant="pin" currentUserVpa={currentUser?.vpa} />
+          <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="rounded-2xl p-8 w-full max-w-md border"
@@ -86,23 +91,26 @@ const BalancePage = () => {
 
           {/* Buttons */}
           <div className="mt-6 space-y-3">
-            <button
-              onClick={handleCheckBalance}
-              disabled={loading}
-              className="w-full text-white py-3 rounded-xl font-semibold transition disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg, #4f46e5, #6366f1)" }}
-            >
-              {loading ? "Checking..." : "Check Balance"}
-            </button>
+            {balance === null && (
+              <button
+                onClick={handleCheckBalance}
+                disabled={loading}
+                className="w-full text-white py-3 rounded-xl font-semibold transition disabled:opacity-60"
+                style={{ background: "linear-gradient(135deg, #4f46e5, #6366f1)" }}
+              >
+                {loading ? "Checking..." : "Check Balance"}
+              </button>
+            )}
             <button
               onClick={() => { resetBalance(); navigate("/dashboard"); }}
-              className="w-full py-3 rounded-xl font-medium border transition"
-              style={{ borderColor: "var(--color-border)", color: "var(--color-text-secondary)" }}
+              className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-full border text-sm font-medium transition-colors"
+              style={{ borderColor: "var(--color-border)", color: "var(--color-accent)", backgroundColor: "var(--color-accent-light)" }}
             >
-              Back to Dashboard
+              ← Back to Dashboard
             </button>
           </div>
         </motion.div>
+        </div>
       </div>
     </PageTransition>
   );

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import useAuthStore from "../store/authStore";
+import Logo from "./Logo";
 
 const Footer = () => {
   const { isLoggedIn } = useAuthStore();
@@ -13,22 +14,17 @@ const Footer = () => {
       }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-xs"
-                style={{ background: "linear-gradient(135deg, #4f46e5, #6366f1)" }}
-              >
-                U
-              </div>
+              <Logo size={28} />
               <span className="font-bold" style={{ color: "var(--color-text)" }}>
-                UPI<span style={{ color: "var(--color-accent)" }}>Sim</span>
-              </span>
+              UPI<span style={{ color: "var(--color-accent)" }}>Grid</span>
+            </span>
             </div>
             <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-              A full-stack UPI payment simulator built to demonstrate distributed systems architecture.
+              Send money instantly to any UPI ID with bank-grade security.
             </p>
           </div>
 
@@ -52,33 +48,14 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Tech */}
-          <div>
-            <h4 className="font-semibold text-sm mb-3" style={{ color: "var(--color-text)" }}>
-              Built With
-            </h4>
-            <div className="flex flex-wrap gap-2">
-              {["React", "Spring Boot", "PostgreSQL", "Zustand", "Tailwind"].map((tech) => (
-                <span
-                  key={tech}
-                  className="text-xs px-2 py-1 rounded-md font-medium"
-                  style={{
-                    backgroundColor: "var(--color-accent-light)",
-                    color: "var(--color-accent)",
-                  }}
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
+
         </div>
 
         <div
           className="mt-8 pt-4 border-t text-center text-xs"
           style={{ borderColor: "var(--color-border)", color: "var(--color-text-muted)" }}
         >
-          UPI Simulator &mdash; Educational Project
+          UPIGrid &mdash; Digital Payments Platform
         </div>
       </div>
     </footer>

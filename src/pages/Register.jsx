@@ -40,7 +40,7 @@ const Register = () => {
       <div className="min-h-[80vh] flex items-center justify-center px-4">
         <Card>
           <h2 className="text-2xl font-bold text-center mb-6" style={{ color: "var(--color-text)" }}>
-            Register for UPI Simulator
+            Register for UPIGrid
           </h2>
           <form onSubmit={handleRegister} className="space-y-4">
             <Input label="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Enter Phone" />

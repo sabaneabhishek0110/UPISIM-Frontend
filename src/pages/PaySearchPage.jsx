@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import useAuthStore from "../store/authStore";
 import userPaymentStore from "../store/paymentStore.js";
 import PageTransition from "../components/PageTransition";
+import TestBanner from "../components/TestBanner";
 
 const PaySearchPage = () => {
   const navigate = useNavigate();
@@ -40,11 +41,12 @@ const PaySearchPage = () => {
   return (
     <PageTransition>
       <div className="max-w-lg mx-auto px-4 py-10">
-        <div className="flex items-center mb-8">
+        <TestBanner variant="pay" currentUserVpa={currUser?.vpa} />
+        <div className="flex items-center gap-3 mb-8">
           <button
             onClick={() => navigate("/dashboard")}
-            className="mr-4 font-medium text-sm"
-            style={{ color: "var(--color-accent)" }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-medium transition-colors hover:bg-opacity-80"
+            style={{ borderColor: "var(--color-border)", color: "var(--color-accent)", backgroundColor: "var(--color-accent-light)" }}
           >
             ← Back
           </button>

@@ -1,13 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { User, Wallet, Send, History } from "lucide-react";
 import PageTransition from "../components/PageTransition";
 import useAuthStore from "../store/authStore";
 
 const cards = [
-  { to: "/profile", icon: "👤", title: "Profile", desc: "View your UPI profile details" },
-  { to: "/balance", icon: "💰", title: "Check Balance", desc: "View your linked account balance" },
-  { to: "/pay", icon: "💸", title: "Pay", desc: "Send money using UPI ID", accent: true },
-  { to: "/transactions", icon: "📜", title: "Transactions", desc: "View your transaction history" },
+  { to: "/profile", Icon: User, title: "Profile", desc: "View your UPI profile details" },
+  { to: "/balance", Icon: Wallet, title: "Check Balance", desc: "View your linked account balance" },
+  { to: "/pay", Icon: Send, title: "Pay", desc: "Send money using UPI ID" },
+  { to: "/transactions", Icon: History, title: "Transactions", desc: "View your transaction history" },
 ];
 
 function Dashboard() {
@@ -36,20 +37,22 @@ function Dashboard() {
               onClick={() => navigate(c.to)}
               className="cursor-pointer rounded-xl p-6 border transition-shadow hover:shadow-lg"
               style={{
-                backgroundColor: c.accent ? undefined : "var(--color-bg-card)",
-                borderColor: c.accent ? "transparent" : "var(--color-border)",
-                ...(c.accent && { background: "linear-gradient(135deg, #4f46e5, #6366f1)" }),
+                backgroundColor: "var(--color-bg-card)",
+                borderColor: "var(--color-border)",
               }}
             >
-              <h2
-                className="text-lg font-semibold mb-1"
-                style={{ color: c.accent ? "#fff" : "var(--color-text)" }}
-              >
-                {c.icon} {c.title}
-              </h2>
+              <div className="flex items-center gap-2 mb-1">
+                <c.Icon size={20} style={{ color: "var(--color-accent)" }} />
+                <h2
+                  className="text-lg font-semibold"
+                  style={{ color: "var(--color-text)" }}
+                >
+                  {c.title}
+                </h2>
+              </div>
               <p
                 className="text-sm"
-                style={{ color: c.accent ? "rgba(255,255,255,0.85)" : "var(--color-text-secondary)" }}
+                style={{ color: "var(--color-text-secondary)" }}
               >
                 {c.desc}
               </p>
